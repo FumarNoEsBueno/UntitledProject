@@ -23,6 +23,7 @@ public partial class Mapa : Node2D
         for(int i = 0; i < 10; i++){
             for(int j = 0; j < 10; j++){
                 this.casilla[j,i] = new Casilla(mazmorraTemporal[j,i] == 0);
+                GD.Print("Test");
             }
         }
     }
