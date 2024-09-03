@@ -9,6 +9,13 @@ public partial class Mapa : Node2D
     public Mapa(){
         FabricaCasilla fabricaCasilla = new FabricaCasilla();
         FabricaUnidad fabricaUnidad = new FabricaUnidad();
+
+        this.aStar.Region = new Rect2I(0, 0, 10, 10);
+        this.aStar.CellSize = new Vector2I(64, 64);
+        this.aStar.DiagonalMode = Godot.AStarGrid2D.DiagonalModeEnum.Never;
+        
+        this.aStar.Update();
+
         int[,] mazmorraTemporal = {
             {1,1,1,1,1,1,1,1,1,1},
             {1,0,0,0,0,0,0,0,0,1},
@@ -28,6 +35,7 @@ public partial class Mapa : Node2D
             for(int j = 0; j < 10; j++){
                 this.casilla[i,j] = fabricaCasilla.fabricarCasilla(mazmorraTemporal[i,j], i, j);
                 this.AddChild(casilla[i,j].getSprite());
+                this.aStar.SetPointSolid(new Vector2I(i,j), mazmorraTemporal[i,j]==1);
             }
         }
 
@@ -38,6 +46,8 @@ public partial class Mapa : Node2D
         Unidad tempUnidad2 = fabricaUnidad.fabricarUnidad(1);
         this.casilla[2,4].addUnidad(tempUnidad2);
         this.AddChild(tempUnidad2.getSprite());
+
+        GD.Print(this.aStar.GetIdPath(tempUnidad.getVector2I(), tempUnidad2.getVector2I()));
     }
 
 	public override void _Ready()
@@ -59,5 +69,10 @@ public partial class Mapa : Node2D
             }
         }
         return matrizRotada;
+    }
+
+    public override void _Input(InputEvent @event)
+    {
+        GD.Print(@event.AsText());
     }
 }

@@ -8,9 +8,14 @@ public abstract class Unidad
     protected Sprite2D sprite = new Sprite2D();
     protected List<Habilidad> habilidades = new List<Habilidad>();
     
+    public Vector2I getVector2I(){
+        return new Vector2I((int)this.sprite.Position.X/64, (int)this.sprite.Position.Y/64);
+    }
+
     public Sprite2D getSprite(){
         return this.sprite;
     }
+
     public void setPosition(Vector2 position){
         this.sprite.Position = position;
     }
@@ -38,5 +43,6 @@ public class enemigoTesteo: Unidad{
     }
 
     public override void comportamiento(){
+        this.habilidades[0].comportamiento();
     } 
 }

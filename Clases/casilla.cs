@@ -12,7 +12,6 @@ public abstract class Casilla
 	
 	public void addUnidad(Unidad unidad){
 		unidad.setPosition(this.sprite.Position);
-		GD.Print(this.sprite.Position);
 		this.unidades.Add(unidad);
 	}
 	public Sprite2D getSprite(){
