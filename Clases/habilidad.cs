@@ -1,8 +1,9 @@
 using Godot;
 using System;
 
-public abstract class habilidad : Node2D
+public abstract class Habilidad 
 {
+    protected String nombre;
     protected Unidad unidad;
     protected Unidad unidadObjetivo;
     protected Vector2I localizacionObjetivo;
@@ -11,8 +12,24 @@ public abstract class habilidad : Node2D
     public abstract void comportamiento();
 }
 
-public class movimiento : habilidad 
+public class movimiento : Habilidad  
 {
+    public movimiento(){
+        this.nombre = "Mover C";
+    }
+
     public override void comportamiento(){
+        GD.Print(this.nombre);
+    } 
+}
+
+public class movimientoAutomatico : Habilidad  
+{
+    public movimientoAutomatico(){
+        this.nombre = "Mover C lo";
+    }
+
+    public override void comportamiento(){
+        GD.Print(this.nombre);
     } 
 }

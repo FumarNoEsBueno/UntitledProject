@@ -13,7 +13,10 @@ public abstract class EstadoSystema
 
 public class JugadorEnMazmorra : EstadoSystema
 {
-    public JugadorEnMazmorra(Systema sistema): base(sistema){}
+
+    public JugadorEnMazmorra(Systema sistema): base(sistema){
+        this.sistema = sistema;
+    }
 
     public override void comportamiento(){
     } 

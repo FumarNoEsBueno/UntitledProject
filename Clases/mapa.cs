@@ -7,12 +7,14 @@ public partial class Mapa : Node2D
     private AStarGrid2D aStar = new AStarGrid2D();
 
     public Mapa(){
+        FabricaCasilla fabricaCasilla = new FabricaCasilla();
+        FabricaUnidad fabricaUnidad = new FabricaUnidad();
         int[,] mazmorraTemporal = {
             {1,1,1,1,1,1,1,1,1,1},
             {1,0,0,0,0,0,0,0,0,1},
-            {1,0,0,0,0,0,0,0,0,1},
-            {1,0,0,0,0,0,0,0,0,1},
-            {1,0,0,0,0,0,0,0,0,1},
+            {1,0,0,1,1,1,0,0,0,1},
+            {1,0,0,0,0,1,1,1,1,1},
+            {1,1,1,0,0,0,0,0,0,1},
             {1,0,0,0,0,0,0,0,0,1},
             {1,0,0,0,0,0,0,0,0,1},
             {1,0,0,0,0,0,0,0,0,1},
@@ -20,11 +22,22 @@ public partial class Mapa : Node2D
             {1,1,1,1,1,1,1,1,1,1},
         };
 
+        mazmorraTemporal = girarLaWeaDeMatrizPorqueSinoNoFuncionaPorLaCresta(mazmorraTemporal);
+
         for(int i = 0; i < 10; i++){
             for(int j = 0; j < 10; j++){
-                this.casilla[j,i] = new Casilla(mazmorraTemporal[j,i] == 0);
+                this.casilla[i,j] = fabricaCasilla.fabricarCasilla(mazmorraTemporal[i,j], i, j);
+                this.AddChild(casilla[i,j].getSprite());
             }
         }
+
+        Unidad tempUnidad = fabricaUnidad.fabricarUnidad(0);
+        this.casilla[1,1].addUnidad(tempUnidad);
+        this.AddChild(tempUnidad.getSprite());
+
+        Unidad tempUnidad2 = fabricaUnidad.fabricarUnidad(1);
+        this.casilla[2,4].addUnidad(tempUnidad2);
+        this.AddChild(tempUnidad2.getSprite());
     }
 
 	public override void _Ready()
@@ -34,4 +47,17 @@ public partial class Mapa : Node2D
 	public override void _Process(double delta)
 	{
 	}
+
+    static int[,] girarLaWeaDeMatrizPorqueSinoNoFuncionaPorLaCresta(int[,] matriz)
+    {
+        int filas = matriz.GetLength(0);
+        int columnas = matriz.GetLength(1);
+        int[,] matrizRotada = new int[columnas, filas];
+        for (int i = 0; i < filas; i++){
+            for (int j = 0; j < columnas; j++){
+                matrizRotada[columnas - 1 - j, i] = matriz[i, j];
+            }
+        }
+        return matrizRotada;
+    }
 }

@@ -3,4 +3,5 @@
 [ext_resource type="Script" path="res://Escenas/Systema.cs" id="1_d0jpu"]
 
 [node name="System" type="Node2D"]
+position = Vector2(32, 32)
 script = ExtResource("1_d0jpu")
