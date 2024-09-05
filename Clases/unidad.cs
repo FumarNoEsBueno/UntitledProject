@@ -22,6 +22,7 @@ public abstract class Unidad
 
     public void setPosition(Vector2 position){
         this.sprite.Position = position;
+        this.sprite.ZIndex = -100;
     }
 
     public abstract void comportamiento(); 

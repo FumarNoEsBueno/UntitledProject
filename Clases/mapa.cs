@@ -57,14 +57,6 @@ public partial class Mapa : Node2D
 		this.estado = new EligiendoHabilidad(this, this.jugador, this.unidades);
 	}
 
-	public override void _Ready()
-	{
-	}
-
-	public override void _Process(double delta)
-	{
-	}
-
 	static int[,] girarLaWeaDeMatrizPorqueSinoNoFuncionaPorLaCresta(int[,] matriz)
 	{
 		int filas = matriz.GetLength(0);
@@ -82,11 +74,19 @@ public partial class Mapa : Node2D
 		this.estado.comportamientoTeclado(@event);
 	}
 
+	public void comportamientoDibujar(Node2D nodo){
+		this.estado.comportamientoDibujar(nodo);
+	}
+
 	public void comportamiento(){
 		this.estado.comportamiento();
 	}
 
 	public void cambiarEstado(EstadoMazmorra estado){
 		this.estado = estado;
+	}
+
+	public bool getCasillaTransitable(Vector2I posicion, Unidad unidad){
+        return this.casilla[posicion.X, posicion.Y].getTransitable(unidad);
 	}
 }

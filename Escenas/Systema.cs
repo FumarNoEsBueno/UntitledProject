@@ -16,7 +16,13 @@ public partial class Systema : Node2D
 	public override void _Input(InputEvent @event)
 	{
 		if(!@event.IsPressed()) return;
+		this.QueueRedraw();
 		this.estado.comportamientoTeclado(@event);
+	}
+
+	 public override void _Draw()
+	{
+		this.estado.comportamientoDibujar(this);
 	}
 
 	public override void _Process(double delta)

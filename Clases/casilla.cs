@@ -26,6 +26,7 @@ public abstract class Casilla
 public class CasillaVacia: Casilla{
 	public CasillaVacia(int posicionX, int posicionY){
 		this.sprite.Position = new Vector2(posicionX * 64, posicionY * 64);
+		this.transitable = true;
 	}
 }
 
@@ -36,5 +37,6 @@ public class ParedTesteo: Casilla{
 		this.transitable = false;
 		this.sprite.Texture = GD.Load<Texture2D>("res://Sprites/Casillas/ParedTesteo.png");
 		this.sprite.Position = new Vector2(posicicionX * 64, posicionY * 64);
+        this.sprite.ZIndex = -100;
 	}
 }

@@ -15,6 +15,7 @@ public abstract class EstadoMazmorra
 	}
 
 	public abstract void comportamientoTeclado(InputEvent @event); 
+	public abstract void comportamientoDibujar(Node2D nodo); 
 	public abstract void comportamiento(); 
 }
 
@@ -27,10 +28,12 @@ public class EligiendoHabilidad : EstadoMazmorra
 	public override void comportamiento(){
 	}
 
+	public override void comportamientoDibujar(Node2D nodo){
+    }
+
 	public override void comportamientoTeclado(InputEvent @event){
 		switch(@event.AsText()){
 			case "1":
-				GD.Print("Wena los k");
 				this.mazmorra.cambiarEstado(new EligiendoObjetivoTargeteado(mazmorra, jugador, unidades, 1));
 			break;
 		}
@@ -40,17 +43,54 @@ public class EligiendoHabilidad : EstadoMazmorra
 public class EligiendoObjetivoTargeteado : EstadoMazmorra
 {
 	private int idHabilidad;
+	private int ancho;
+	private bool casillaNorte;
+	private bool casillaSur;
+	private bool casillaEste;
+	private bool casillaOeste;
+	private Vector2I posCursor;
+	private Vector2I posJugador;
 
 	public EligiendoObjetivoTargeteado(Mapa mazmorra, Unidad jugador, List<Unidad> unidades, int idHabilidad): base(mazmorra, jugador, unidades){
 		this.idHabilidad = idHabilidad;
+        ancho = 62;
+        posJugador = this.jugador.getVector2I();
+        posCursor = posJugador;
+        casillaNorte = this.mazmorra.getCasillaTransitable(posJugador + new Vector2I(0,-1), this.jugador);
+        casillaSur = this.mazmorra.getCasillaTransitable(posJugador + new Vector2I(0,1), this.jugador);
+        casillaEste = this.mazmorra.getCasillaTransitable(posJugador + new Vector2I(1,0), this.jugador);
+        casillaOeste = this.mazmorra.getCasillaTransitable(posJugador + new Vector2I(-1,0), this.jugador);
 	}
 
+	public override void comportamientoDibujar(Node2D nodo){
+
+        if(casillaEste) nodo.DrawRect(new Rect2((posJugador.X + 1) * 65 - 32, posJugador.Y * 65 - 32, ancho, ancho), Colors.Green, false);
+        if(casillaOeste) nodo.DrawRect(new Rect2((posJugador.X - 1) * 65 - 32, posJugador.Y * 65 - 32, ancho, ancho), Colors.Green, false);
+        if(casillaSur) nodo.DrawRect(new Rect2(posJugador.X * 65 - 32, (posJugador.Y + 1) * 65 - 32, ancho, ancho), Colors.Green, false);
+        if(casillaNorte) nodo.DrawRect(new Rect2(posJugador.X * 65 - 32, (posJugador.Y - 1) * 65 - 32, ancho, ancho), Colors.Green, false);
+        if(posJugador != posCursor) nodo.DrawRect(new Rect2(posCursor.X * 65 - 32, (posCursor.Y) * 65 - 32, ancho, ancho), Colors.Green, true);
+    }
+
 	public override void comportamientoTeclado(InputEvent @event){
-		GD.Print(@event.AsText());
 		switch(@event.AsText()){
 			case "Escape": case "Backspace":
-				GD.Print("Regresando");
 				this.mazmorra.cambiarEstado(new EligiendoHabilidad(mazmorra, jugador, unidades));
+			break;
+			case "Up":
+                if(casillaNorte) posCursor = posJugador + new Vector2I(0,-1); 
+            break;
+			case "Down":
+               if(casillaSur) posCursor = posJugador + new Vector2I(0,1); 
+			break;
+			case "Left":
+               if(casillaOeste) posCursor = posJugador + new Vector2I(-1,0); 
+			break;
+			case "Right":
+               if(casillaEste) posCursor = posJugador + new Vector2I(1,0); 
+			break;
+			case "Enter":
+                if(posCursor != posJugador) 
+				this.mazmorra.cambiarEstado(new EjecutandoTurnoJugador(mazmorra, jugador, unidades));
 			break;
 		}
 	} 
@@ -58,6 +98,22 @@ public class EligiendoObjetivoTargeteado : EstadoMazmorra
 	public override void comportamiento(){
 	}
 
+}
+
+public class EjecutandoTurnoJugador : EstadoMazmorra
+{
+
+	public EjecutandoTurnoJugador(Mapa mazmorra, Unidad jugador, List<Unidad> unidades): base(mazmorra, jugador, unidades){
+	}
+
+	public override void comportamiento(){
+	}
+
+	public override void comportamientoDibujar(Node2D nodo){
+    }
+
+	public override void comportamientoTeclado(InputEvent @event){
+	} 
 }
 
 public class TurnoSistema : EstadoMazmorra
@@ -68,6 +124,9 @@ public class TurnoSistema : EstadoMazmorra
 
 	public override void comportamiento(){
 	}
+
+	public override void comportamientoDibujar(Node2D nodo){
+    }
 
 	public override void comportamientoTeclado(InputEvent @event){
 	} 
