@@ -10,6 +10,7 @@ public abstract class EstadoSistema
 		this.sistema = sistema;
 	}
 
+	public abstract void comportamientoTeclado(InputEvent @event); 
 	public abstract void comportamiento(); 
 }
 
@@ -21,6 +22,10 @@ public class JugadorEnMazmorra : EstadoSistema
 		this.mapa = mapa;
 	}
 
+	public override void comportamientoTeclado(InputEvent @event){
+		this.mapa.comportamientoTeclado(@event);
+	}
+
 	public override void comportamiento(){
 		this.mapa.comportamiento();
 	} 
@@ -29,6 +34,8 @@ public class JugadorEnMazmorra : EstadoSistema
 public class menuPrincipal : EstadoSistema
 {
 	public menuPrincipal(Systema sistema, Mapa mapa): base(sistema, mapa){}
+	public override void comportamientoTeclado(InputEvent @event){
+	}
 	public override void comportamiento(){
 	} 
 }

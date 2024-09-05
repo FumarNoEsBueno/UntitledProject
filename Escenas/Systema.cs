@@ -13,6 +13,12 @@ public partial class Systema : Node2D
 		this.AddChild(mapa);
 	}
 
+	public override void _Input(InputEvent @event)
+	{
+		if(!@event.IsPressed()) return;
+		this.estado.comportamientoTeclado(@event);
+	}
+
 	public override void _Process(double delta)
 	{
 		this.estado.comportamiento();

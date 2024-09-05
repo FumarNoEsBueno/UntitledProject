@@ -78,8 +78,7 @@ public partial class Mapa : Node2D
 		return matrizRotada;
 	}
 
-	public override void _Input(InputEvent @event)
-	{
+	public void comportamientoTeclado(InputEvent @event){
 		this.estado.comportamientoTeclado(@event);
 	}
 
