@@ -9,6 +9,10 @@ public abstract class Habilidad
     protected Vector2I localizacionObjetivo;
     protected AStarGrid2D astar;
 
+    public String getNombre(){
+        return this.nombre;
+    }
+
     public abstract void comportamiento();
 }
 

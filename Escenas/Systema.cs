@@ -3,12 +3,13 @@ using System;
 
 public partial class Systema : Node2D
 {
-	Mapa mapa = new Mapa();
-	EstadoSystema estado;
+	Mapa mapa;
+	EstadoSistema estado;
 
 	public override void _Ready()
 	{
-		this.estado = new JugadorEnMazmorra(this);
+		this.mapa = new Mapa();
+		this.estado = new JugadorEnMazmorra(this, this.mapa);
 		this.AddChild(mapa);
 	}
 

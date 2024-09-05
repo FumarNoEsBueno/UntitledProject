@@ -16,9 +16,14 @@ public abstract class Unidad
         return this.sprite;
     }
 
+    public List<Habilidad> getHabilidades(){
+        return this.habilidades;
+    }
+
     public void setPosition(Vector2 position){
         this.sprite.Position = position;
     }
+
     public abstract void comportamiento(); 
 }
 
