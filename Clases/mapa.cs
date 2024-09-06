@@ -87,6 +87,10 @@ public partial class Mapa : Node2D
 	}
 
 	public bool getCasillaTransitable(Vector2I posicion, Unidad unidad){
-        return this.casilla[posicion.X, posicion.Y].getTransitable(unidad);
+		return this.casilla[posicion.X, posicion.Y].getTransitable(unidad);
+	}
+
+	public AStarGrid2D getAStarGrid2D(){
+		return this.aStar;
 	}
 }

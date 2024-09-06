@@ -14,22 +14,29 @@ public abstract class Habilidad
 		return this.nombre;
 	}
 
-	public abstract void comportamiento();
-	public abstract void inicializar();
+	public abstract void inicializar(AStarGrid2D astar, Vector2I objetivo);
+	public abstract bool comportamiento();
 }
 
 public class movimiento : Habilidad  
 {
-	public movimiento(Unidad unidad, AStarGrid2D astar){
+    AStarGrid2D astar;
+    Vector2I objetivo;
+
+	public movimiento(Unidad unidad){
         this.unidad = unidad;
-        this.astar = astar;
 		this.nombre = "Mover C";
 	}
 
-	public override void inicializar(){
+	public override void inicializar(AStarGrid2D astar, Vector2I objetivo){
+        this.astar = astar;
+        this.objetivo = objetivo;
     }
 
-	public override void comportamiento(){
+	public override bool comportamiento(){
+        this.unidad.setPosition(objetivo * 64);
+        return true;
+        
 	} 
 }
 
@@ -39,10 +46,11 @@ public class movimientoAutomatico : Habilidad
 		this.nombre = "Mover C lo";
 	}
 
-	public override void inicializar(){
+	public override void inicializar(AStarGrid2D astar, Vector2I objetivo){
     }
 
-	public override void comportamiento(){
+	public override bool comportamiento(){
 		GD.Print(this.nombre);
+        return true;
 	} 
 }

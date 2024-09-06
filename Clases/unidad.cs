@@ -33,7 +33,7 @@ public class personajeTesteo: Unidad{
     public personajeTesteo(){
         this.nombre = "Personaje de testeo";
 		this.sprite.Texture = GD.Load<Texture2D>("res://Sprites/Unidades/UnidadTesteo1.png");
-        this.habilidades.Add(new movimiento());
+        this.habilidades.Add(new movimiento(this));
     }
 
     public override void comportamiento(){

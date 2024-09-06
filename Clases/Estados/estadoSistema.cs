@@ -29,7 +29,7 @@ public class JugadorEnMazmorra : EstadoSistema
 
 	public override void comportamientoDibujar(Node2D nodo){
 		this.mapa.comportamientoDibujar(nodo);
-    }
+	}
 
 	public override void comportamiento(){
 		this.mapa.comportamiento();
@@ -43,7 +43,7 @@ public class menuPrincipal : EstadoSistema
 	public override void comportamientoTeclado(InputEvent @event){
 	}
 	public override void comportamientoDibujar(Node2D nodo){
-    }
+	}
 	public override void comportamiento(){
 	} 
 }
