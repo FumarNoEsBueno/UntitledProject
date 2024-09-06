@@ -43,32 +43,27 @@ public class EligiendoHabilidad : EstadoMazmorra
 public class EligiendoObjetivoTargeteado : EstadoMazmorra
 {
 	private Habilidad habilidad;
-	private int ancho;
-	private bool casillaNorte;
-	private bool casillaSur;
-	private bool casillaEste;
-	private bool casillaOeste;
+	private AStarGrid2D aStar;
 	private Vector2I posCursor;
 	private Vector2I posJugador;
+	private Godot.Collections.Array<Vector2I> path;
 
+		
 	public EligiendoObjetivoTargeteado(Mapa mazmorra, Unidad jugador, List<Unidad> unidades, int idHabilidad): base(mazmorra, jugador, unidades){
 		habilidad = jugador.getHabilidades()[idHabilidad - 1];
-		ancho = 62;
 		posJugador = this.jugador.getVector2I();
 		posCursor = posJugador;
-		casillaNorte = this.mazmorra.getCasillaTransitable(posJugador + new Vector2I(0,-1), this.jugador);
-		casillaSur = this.mazmorra.getCasillaTransitable(posJugador + new Vector2I(0,1), this.jugador);
-		casillaEste = this.mazmorra.getCasillaTransitable(posJugador + new Vector2I(1,0), this.jugador);
-		casillaOeste = this.mazmorra.getCasillaTransitable(posJugador + new Vector2I(-1,0), this.jugador);
+		aStar = mazmorra.getAStarGrid2D();
 	}
 
 	public override void comportamientoDibujar(Node2D nodo){
-
-		if(casillaEste) nodo.DrawRect(new Rect2((posJugador.X + 1) * 64 - 32, posJugador.Y * 64 - 32, ancho, ancho), Colors.Green, false);
-		if(casillaOeste) nodo.DrawRect(new Rect2((posJugador.X - 1) * 64 - 32, posJugador.Y * 64 - 32, ancho, ancho), Colors.Green, false);
-		if(casillaSur) nodo.DrawRect(new Rect2(posJugador.X * 64 - 32, (posJugador.Y + 1) * 64 - 32, ancho, ancho), Colors.Green, false);
-		if(casillaNorte) nodo.DrawRect(new Rect2(posJugador.X * 64 - 32, (posJugador.Y - 1) * 64 - 32, ancho, ancho), Colors.Green, false);
-		if(posJugador != posCursor) nodo.DrawRect(new Rect2(posCursor.X * 64 - 32, (posCursor.Y) * 64 - 32, ancho, ancho), Colors.Green, true);
+		GD.Print(path);
+		if(posJugador != posCursor){
+			nodo.DrawRect(new Rect2(posCursor.X * 64 - 32, (posCursor.Y) * 64 - 32, 62, 62), Colors.Green, true);
+			for(int i = 0; i < path.Count - 1; i++){
+				nodo.DrawLine(new Vector2(path[i].X*64, path[i].Y*64), new Vector2( path[i+1].X*64, path[i+1].Y*64),Colors.Green);
+			}
+		}
 	}
 
 	public override void comportamientoTeclado(InputEvent @event){
@@ -77,16 +72,16 @@ public class EligiendoObjetivoTargeteado : EstadoMazmorra
 				this.mazmorra.cambiarEstado(new EligiendoHabilidad(mazmorra, jugador, unidades));
 			break;
 			case "Up":
-				if(casillaNorte) posCursor = posJugador + new Vector2I(0,-1); 
+				moverCursor(new Vector2I(0, -1));
 			break;
 			case "Down":
-			   if(casillaSur) posCursor = posJugador + new Vector2I(0,1); 
+				moverCursor(new Vector2I(0, 1));
 			break;
 			case "Left":
-			   if(casillaOeste) posCursor = posJugador + new Vector2I(-1,0); 
+				moverCursor(new Vector2I(-1, 0));
 			break;
 			case "Right":
-			   if(casillaEste) posCursor = posJugador + new Vector2I(1,0); 
+				moverCursor(new Vector2I(1, 0));
 			break;
 			case "Enter":
 				if(posCursor != posJugador) 
@@ -96,6 +91,17 @@ public class EligiendoObjetivoTargeteado : EstadoMazmorra
 	} 
 
 	public override void comportamiento(){
+	}
+
+	private void moverCursor(Vector2I direccion){
+		if(!aStar.IsPointSolid(posCursor + direccion)){
+			posCursor += direccion;
+			Godot.Collections.Array<Vector2I> tempPath = aStar.GetIdPath(posCursor, posJugador); 
+			if(tempPath.Count - 1 > jugador.getMovimientosTemp()){
+				posCursor -= direccion;
+			}else
+				path = tempPath;
+		} 
 	}
 
 }

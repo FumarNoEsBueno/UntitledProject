@@ -5,6 +5,8 @@ using System.Collections.Generic;
 public abstract class Unidad 
 {
     protected String nombre;
+    protected int movimientos;
+    protected int movimientosTemp;
     protected Sprite2D sprite = new Sprite2D();
     protected List<Habilidad> habilidades = new List<Habilidad>();
     
@@ -22,6 +24,13 @@ public abstract class Unidad
 
     public void setPosition(Vector2 position){
         this.sprite.Position = position;
+    }
+
+    public int getMovimientosTemp(){
+        return this.movimientosTemp;
+    }
+
+    public Unidad(){
         this.sprite.ZIndex = -100;
     }
 
@@ -30,8 +39,10 @@ public abstract class Unidad
 
 public class personajeTesteo: Unidad{
 
-    public personajeTesteo(){
+    public personajeTesteo(): base(){
         this.nombre = "Personaje de testeo";
+        this.movimientos = 6;
+        this.movimientosTemp = 6;
 		this.sprite.Texture = GD.Load<Texture2D>("res://Sprites/Unidades/UnidadTesteo1.png");
         this.habilidades.Add(new movimiento(this));
     }
@@ -42,7 +53,7 @@ public class personajeTesteo: Unidad{
 
 public class enemigoTesteo: Unidad{
 
-    public enemigoTesteo(){
+    public enemigoTesteo(): base(){
         this.nombre = "Enemigo de testeo";
 		this.sprite.Texture = GD.Load<Texture2D>("res://Sprites/Unidades/UnidadTesteo2.png");
         this.habilidades.Add(new movimientoAutomatico());
