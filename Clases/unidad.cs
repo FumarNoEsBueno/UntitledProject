@@ -22,6 +22,10 @@ public abstract class Unidad
         return this.habilidades;
     }
 
+    public Vector2 getPosition(){
+        return this.sprite.Position;
+    }
+
     public void setPosition(Vector2 position){
         this.sprite.Position = position;
     }
@@ -43,7 +47,7 @@ public class personajeTesteo: Unidad{
         this.nombre = "Personaje de testeo";
         this.movimientos = 6;
         this.movimientosTemp = 6;
-		this.sprite.Texture = GD.Load<Texture2D>("res://Sprites/Unidades/UnidadTesteo1.png");
+		this.sprite.Texture = GD.Load<Texture2D>("res://Sprites/Unidades/Detofoo.png");
         this.habilidades.Add(new movimiento(this));
     }
 
@@ -55,7 +59,7 @@ public class enemigoTesteo: Unidad{
 
     public enemigoTesteo(): base(){
         this.nombre = "Enemigo de testeo";
-		this.sprite.Texture = GD.Load<Texture2D>("res://Sprites/Unidades/UnidadTesteo2.png");
+		this.sprite.Texture = GD.Load<Texture2D>("res://Sprites/Unidades/Kikimora_chiquita.png");
         this.habilidades.Add(new movimientoAutomatico());
     }
 

@@ -5,24 +5,48 @@ using System.Collections.Generic;
 public abstract class EstadoMazmorra 
 {
 	protected Mapa mazmorra;
+	protected bool movimientoTactico;
 	protected Unidad jugador;
 	protected List<Unidad> unidades = new List<Unidad>();
+
+	public EstadoMazmorra(EstadoMazmorra estado){
+		this.mazmorra = estado.getMazmorra();
+		this.jugador = estado.getJugador();
+		this.unidades = estado.getUnidades();
+		this.movimientoTactico = estado.movimientoTactico;
+	}
 
 	public EstadoMazmorra(Mapa mazmorra, Unidad jugador, List<Unidad> unidades){
 		this.mazmorra = mazmorra;
 		this.jugador = jugador;
 		this.unidades = unidades;
+		this.movimientoTactico = false;
 	}
 
 	public abstract void comportamientoTeclado(InputEvent @event); 
 	public abstract void comportamientoDibujar(Node2D nodo); 
 	public abstract void comportamiento(); 
+
+	public List<Unidad> getUnidades(){
+		return this.unidades;
+	}
+
+	public Unidad getJugador(){
+		return this.jugador;
+	}
+
+	public Mapa getMazmorra(){
+		return this.mazmorra;
+	}
 }
 
 public class EligiendoHabilidad : EstadoMazmorra
 {
 
 	public EligiendoHabilidad(Mapa mazmorra, Unidad jugador, List<Unidad> unidades): base(mazmorra, jugador, unidades){
+	}
+
+	public EligiendoHabilidad(EstadoMazmorra estado): base(estado){
 	}
 
 	public override void comportamiento(){
@@ -34,7 +58,10 @@ public class EligiendoHabilidad : EstadoMazmorra
 	public override void comportamientoTeclado(InputEvent @event){
 		switch(@event.AsText()){
 			case "1":
-				this.mazmorra.cambiarEstado(new EligiendoObjetivoTargeteado(mazmorra, jugador, unidades, 1));
+				this.mazmorra.cambiarEstado(new EligiendoObjetivoTargeteado(this, 1));
+			break;
+			case "M":
+				movimientoTactico = !movimientoTactico;
 			break;
 		}
 	} 
@@ -49,15 +76,16 @@ public class EligiendoObjetivoTargeteado : EstadoMazmorra
 	private Godot.Collections.Array<Vector2I> path;
 
 		
-	public EligiendoObjetivoTargeteado(Mapa mazmorra, Unidad jugador, List<Unidad> unidades, int idHabilidad): base(mazmorra, jugador, unidades){
-		habilidad = jugador.getHabilidades()[idHabilidad - 1];
-		posJugador = this.jugador.getVector2I();
+	public EligiendoObjetivoTargeteado(EstadoMazmorra estado, int idHabilidad): base(estado){
+		habilidad = estado.getJugador().getHabilidades()[idHabilidad - 1];
+		posJugador = estado.getJugador().getVector2I();
 		posCursor = posJugador;
-		aStar = mazmorra.getAStarGrid2D();
+		aStar = estado.getMazmorra().getAStarGrid2D();
+		aStar.SetPointSolid(jugador.getVector2I(), false);
 	}
 
 	public override void comportamientoDibujar(Node2D nodo){
-		GD.Print(path);
+		if(movimientoTactico) return;
 		if(posJugador != posCursor){
 			nodo.DrawRect(new Rect2(posCursor.X * 64 - 32, (posCursor.Y) * 64 - 32, 62, 62), Colors.Green, true);
 			for(int i = 0; i < path.Count - 1; i++){
@@ -69,7 +97,7 @@ public class EligiendoObjetivoTargeteado : EstadoMazmorra
 	public override void comportamientoTeclado(InputEvent @event){
 		switch(@event.AsText()){
 			case "Escape": case "Backspace":
-				this.mazmorra.cambiarEstado(new EligiendoHabilidad(mazmorra, jugador, unidades));
+				this.mazmorra.cambiarEstado(new EligiendoHabilidad(this));
 			break;
 			case "Up":
 				moverCursor(new Vector2I(0, -1));
@@ -85,7 +113,12 @@ public class EligiendoObjetivoTargeteado : EstadoMazmorra
 			break;
 			case "Enter":
 				if(posCursor != posJugador) 
-					this.mazmorra.cambiarEstado(new EjecutandoTurnoJugador(mazmorra, jugador, unidades, habilidad, posCursor));
+					this.mazmorra.cambiarEstado(new EjecutandoTurnoJugador(mazmorra,
+								jugador,
+								unidades,
+								habilidad,
+								posCursor,
+								path));
 			break;
 		}
 	} 
@@ -109,14 +142,24 @@ public class EligiendoObjetivoTargeteado : EstadoMazmorra
 public class EjecutandoTurnoJugador : EstadoMazmorra
 {
 	Habilidad habilidad;
-	public EjecutandoTurnoJugador(Mapa mazmorra, Unidad jugador, List<Unidad> unidades, Habilidad habilidad, Vector2I objetivo): base(mazmorra, jugador, unidades){
+
+	public EjecutandoTurnoJugador(Mapa mazmorra, 
+			Unidad jugador,
+			List<Unidad> unidades,
+			Habilidad habilidad,
+			Vector2I objetivo,
+			Godot.Collections.Array<Vector2I> path
+			):
+		base(mazmorra, jugador, unidades){
+
 		this.habilidad = habilidad;
-		this.habilidad.inicializar(this.mazmorra.getAStarGrid2D(), objetivo);
+		this.habilidad.inicializar(this.mazmorra.getAStarGrid2D(), objetivo, path);
 	}
 
 	public override void comportamiento(){
 		if(this.habilidad.comportamiento()){
-			this.mazmorra.cambiarEstado(new EligiendoHabilidad(mazmorra, jugador, unidades));
+			GD.Print("Terminando");
+			this.mazmorra.cambiarEstado(new TurnoSistema(this));
 		}
 	}
 
@@ -130,10 +173,11 @@ public class EjecutandoTurnoJugador : EstadoMazmorra
 public class TurnoSistema : EstadoMazmorra
 {
 
-	public TurnoSistema(Mapa mazmorra, Unidad jugador, List<Unidad> unidades): base(mazmorra, jugador, unidades){
+	public TurnoSistema(EstadoMazmorra estado): base(estado){
 	}
 
 	public override void comportamiento(){
+		GD.Print("Soy un enemigo malvado");
 	}
 
 	public override void comportamientoDibujar(Node2D nodo){

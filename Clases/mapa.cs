@@ -11,7 +11,7 @@ public partial class Mapa : Node2D
 	private EstadoMazmorra estado;
 
 	public Mapa(){
-		FabricaCasilla fabricaCasilla = new FabricaCasilla();
+		FabricaCasilla fabricaCasilla = new FabricaCasilla(this.aStar);
 		FabricaUnidad fabricaUnidad = new FabricaUnidad();
 
 		this.aStar.Region = new Rect2I(0, 0, 10, 10);
